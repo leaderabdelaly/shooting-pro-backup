@@ -1,19 +1,67 @@
-<!DOCTYPE html><html lang="ar"><head>  <meta charset="UTF-8">  <title>Shehaby Shooting Pro</title>  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">  <link rel="stylesheet" href="style.css"></head>
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>Shehaby Shooting Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+
 <body>
-<h1>Shehaby Shooting Pro</h1>
-<!-- تحميل الهدف --><input type="file" id="targetInput" accept="image/*">
-<!-- الهدف --><div id="targetContainer">  <img id="targetImg" /></div>
-<!-- أدوات --><div class="controls">  <button id="analyzeBtn">بدء تحليل الأخطاء</button></div>
-<!-- النتيجة --><div id="result"></div>
-<hr>
-<!-- ====== التفعيل ====== --><div id="licenseBox">  <h3>النسخة الاحترافية</h3>
-  <div id="freeNotice">    <p>أنت تستخدم النسخة المجانية (10 طلقات فقط)</p>  </div>
-  <div id="proNotice" style="display:none;">    <p> النسخة الاحترافية مفعلة</p>  </div>
-  <input    type="text"    id="licenseInput"    placeholder="أدخل كود التفعيل"  >
-  <button onclick="activateLicense()">تفعيل النسخة الاحترافية</button></div>
-<script src="license.js"></script><script src="app.js"></script>
-<script>  // ربط الواجهة مع نظام التفعيل  function activateLicense() {    const key = document.getElementById("licenseInput").value.trim();    if (activatePro(key)) {      updateLicenseUI();    }  }
-  function updateLicenseUI() {    if (isProUser()) {      document.getElementById("freeNotice").style.display = "none";      document.getElementById("proNotice").style.display = "block";      document.getElementById("licenseInput").style.display = "none";    }  }
-  updateLicenseUI();</script>
-</body></html>
+
+<header>
+  <h1 id="appTitle">Shehaby Shooting Pro</h1>
+  <div>
+    <span id="proBadge" style="display:none;">⭐ PRO</span>
+    <button id="langToggle">EN</button>
+  </div>
+</header>
+
+<section>
+  <input type="file" id="imageInput" accept="image/*">
+</section>
+
+<canvas id="targetCanvas"></canvas>
+
+<section id="controls">
+  <button id="setCenterBtn">تحديد مركز الهدف</button>
+  <button id="undoBtn">تراجع</button>
+  <button id="analyzeBtn">بدء تحليل الأخطاء</button>
+</section>
+
+<section>
+  <p id="analysisText"></p>
+</section>
+
+<!-- Upgrade Overlay -->
+<div id="upgradeOverlay" class="overlay">
+  <div class="overlay-content">
+    <h2>النسخة الاحترافية</h2>
+
+    <p>
+      النسخة الاحترافية تتيح:
+      <br>• عدد طلقات غير محدود
+      <br>• تحليل كل طلقة
+      <br>• طريقة علاج الخطأ
+    </p>
+
+    <p class="pay-text">
+      للاشتراك:
+      <br>حوّل الاشتراك عبر فودافون كاش أو إنستا باي
+      <br>ثم أرسل رسالة واتساب
+      <br>وسيتم إرسال كود التفعيل
+    </p>
+
+    <a id="whatsBtn" target="_blank">📲 اشترك عبر واتساب</a>
+
+    <input type="text" id="proCodeInput" placeholder="أدخل كود التفعيل">
+    <button id="activateProBtn">تفعيل النسخة الاحترافية</button>
+    <button onclick="closeUpgrade()">لاحقًا</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
