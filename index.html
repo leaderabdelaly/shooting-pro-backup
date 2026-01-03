@@ -11,57 +11,69 @@
 
 <body>
 
-<header>
-  <h1 id="appTitle">Shehaby Shooting Pro</h1>
-  <div>
-    <div id="targetContainer">
+<h1>Shehaby Shooting Pro</h1>
+
+<!-- تحميل الهدف -->
+<input type="file" id="targetInput" accept="image/*">
+
+<!-- الهدف -->
+<div id="targetContainer">
   <img id="targetImg" />
 </div>
-    <span id="proBadge" style="display:none;">⭐ PRO</span>
-    <button id="langToggle">EN</button>
-  </div>
-</header>
 
-<section id="uploadSection">
-  <input type="file" id="imageInput" accept="image/*">
-</section>
-
-<canvas id="targetCanvas"></canvas>
-
-<section id="controls">
-  <button id="setCenterBtn">تحديد مركز الهدف</button>
-  <button id="undoBtn">تراجع</button>
+<!-- أدوات -->
+<div class="controls">
   <button id="analyzeBtn">بدء تحليل الأخطاء</button>
-</section>
-
-<section id="result">
-  <p id="analysisText"></p>
-</section>
-
-<!-- Upgrade Overlay -->
-<div id="upgradeOverlay" class="overlay">
-  <div class="overlay-content">
-    <h2>النسخة الاحترافية</h2>
-    <p>
-      النسخة الاحترافية تتيح:
-      <br>• عدد طلقات غير محدود
-      <br>• تحليل كل طلقة
-      <br>• طريقة علاج الخطأ
-    </p>
-
-    <p class="pay-text">
-      للتفعيل:
-      <br>حوّل الاشتراك عبر فودافون كاش أو إنستا باي
-      <br>ثم أدخل كود التفعيل
-    </p>
-
-    <input type="text" id="proCodeInput" placeholder="أدخل كود التفعيل">
-    <button id="activateProBtn">تفعيل النسخة الاحترافية</button>
-    <button onclick="closeUpgrade()">لاحقًا</button>
-  </div>
 </div>
 
+<!-- النتيجة -->
+<div id="result"></div>
+
+<hr>
+
+<!-- ====== التفعيل ====== -->
+<div id="licenseBox">
+  <h3>النسخة الاحترافية</h3>
+
+  <div id="freeNotice">
+    <p>أنت تستخدم النسخة المجانية (10 طلقات فقط)</p>
+  </div>
+
+  <div id="proNotice" style="display:none;">
+    <p>✅ النسخة الاحترافية مفعلة</p>
+  </div>
+
+  <input
+    type="text"
+    id="licenseInput"
+    placeholder="أدخل كود التفعيل"
+  >
+
+  <button onclick="activateLicense()">تفعيل النسخة الاحترافية</button>
+</div>
+
+<script src="license.js"></script>
 <script src="app.js"></script>
+
+<script>
+  // ربط الواجهة مع نظام التفعيل
+  function activateLicense() {
+    const key = document.getElementById("licenseInput").value.trim();
+    if (activatePro(key)) {
+      updateLicenseUI();
+    }
+  }
+
+  function updateLicenseUI() {
+    if (isProUser()) {
+      document.getElementById("freeNotice").style.display = "none";
+      document.getElementById("proNotice").style.display = "block";
+      document.getElementById("licenseInput").style.display = "none";
+    }
+  }
+
+  updateLicenseUI();
+</script>
+
 </body>
 </html>
-
