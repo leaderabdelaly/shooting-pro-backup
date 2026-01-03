@@ -4,7 +4,31 @@ body {
   margin: 0;
   text-align: center;
 }
+#targetContainer {
+  position: relative;
+  display: inline-block;
+}
 
+#targetImg {
+  max-width: 100%;
+  display: block;
+}
+
+.shot, .center {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.shot {
+  background: red;
+}
+
+.center {
+  background: blue;
+}
 header {
   background: #111;
   color: white;
@@ -54,3 +78,4 @@ canvas {
   font-size: 14px;
   color: #444;
 }
+
