@@ -11,69 +11,30 @@
 
 <body>
 
-<h1>Shehaby Shooting Pro</h1>
+<header>
+  <h1 id="appTitle">Shehaby Shooting Pro</h1>
 
-<!-- تحميل الهدف -->
-<input type="file" id="targetInput" accept="image/*">
+  <button id="langToggle">EN</button>
+</header>
 
-<!-- الهدف -->
-<div id="targetContainer">
-  <img id="targetImg" />
-</div>
+<section id="uploadSection">
+  <input type="file" id="imageInput" accept="image/*">
+</section>
 
-<!-- أدوات -->
-<div class="controls">
-  <button id="analyzeBtn">بدء تحليل الأخطاء</button>
-</div>
+<section id="canvasSection">
+  <canvas id="targetCanvas"></canvas>
+</section>
 
-<!-- النتيجة -->
-<div id="result"></div>
+<section id="controls">
+  <button id="setCenterBtn">&#1578;&#1581;&#1583;&#1610;&#1583; &#1605;&#1585;&#1603;&#1586; &#1575;&#1604;&#1607;&#1583;&#1601;</button>
+  <button id="undoBtn">&#1578;&#1585;&#1575;&#1580;&#1593;</button>
+  <button id="analyzeBtn">&#1576;&#1583;&#1569; &#1578;&#1581;&#1604;&#1610;&#1604; &#1575;&#1604;&#1571;&#1582;&#1591;&#1575;&#1569;</button>
+</section>
 
-<hr>
+<section id="result">
+  <p id="analysisText"></p>
+</section>
 
-<!-- ====== التفعيل ====== -->
-<div id="licenseBox">
-  <h3>النسخة الاحترافية</h3>
-
-  <div id="freeNotice">
-    <p>أنت تستخدم النسخة المجانية (10 طلقات فقط)</p>
-  </div>
-
-  <div id="proNotice" style="display:none;">
-    <p>✅ النسخة الاحترافية مفعلة</p>
-  </div>
-
-  <input
-    type="text"
-    id="licenseInput"
-    placeholder="أدخل كود التفعيل"
-  >
-
-  <button onclick="activateLicense()">تفعيل النسخة الاحترافية</button>
-</div>
-
-<script src="license.js"></script>
 <script src="app.js"></script>
-
-<script>
-  // ربط الواجهة مع نظام التفعيل
-  function activateLicense() {
-    const key = document.getElementById("licenseInput").value.trim();
-    if (activatePro(key)) {
-      updateLicenseUI();
-    }
-  }
-
-  function updateLicenseUI() {
-    if (isProUser()) {
-      document.getElementById("freeNotice").style.display = "none";
-      document.getElementById("proNotice").style.display = "block";
-      document.getElementById("licenseInput").style.display = "none";
-    }
-  }
-
-  updateLicenseUI();
-</script>
-
 </body>
 </html>
