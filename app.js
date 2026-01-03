@@ -1,6 +1,6 @@
 /* ==============================
    Shehaby Shooting Pro
-   app.js – Mobile & Desktop Fixed
+   app.js – Stable Version
    ============================== */
 
 const targetInput = document.getElementById("targetInput");
@@ -13,36 +13,26 @@ let shots = [];
 let centerPoint = null;
 
 /* ==============================
-   Helpers
+   Utils
    ============================== */
 
-function getScaledPosition(event) {
+function getEventPosition(event) {
   const rect = targetImg.getBoundingClientRect();
-
-  const scaleX = targetImg.naturalWidth / rect.width;
-  const scaleY = targetImg.naturalHeight / rect.height;
 
   const clientX = event.touches ? event.touches[0].clientX : event.clientX;
   const clientY = event.touches ? event.touches[0].clientY : event.clientY;
 
-  const x = (clientX - rect.left) * scaleX;
-  const y = (clientY - rect.top) * scaleY;
+  const x = clientX - rect.left;
+  const y = clientY - rect.top;
 
-  return { x, y, scaleX, scaleY };
+  return { x, y };
 }
 
 function drawDot(x, y, className) {
-  const rect = targetImg.getBoundingClientRect();
-
-  const scaleX = targetImg.naturalWidth / rect.width;
-  const scaleY = targetImg.naturalHeight / rect.height;
-
   const dot = document.createElement("div");
   dot.className = className;
-
-  dot.style.left = `${x / scaleX}px`;
-  dot.style.top = `${y / scaleY}px`;
-
+  dot.style.left = `${x}px`;
+  dot.style.top = `${y}px`;
   targetContainer.appendChild(dot);
 }
 
@@ -58,12 +48,12 @@ targetInput.addEventListener("change", (e) => {
   reader.onload = () => {
     targetImg.src = reader.result;
     targetImg.style.display = "block";
-    resetAll();
+    clearShotsOnly();
   };
   reader.readAsDataURL(file);
 });
 
-function resetAll() {
+function clearShotsOnly() {
   shots = [];
   centerPoint = null;
   resultBox.innerHTML = "";
@@ -71,14 +61,12 @@ function resetAll() {
 }
 
 /* ==============================
-   Set Center Point
+   Set Center
    ============================== */
 
 targetImg.addEventListener("dblclick", setCenter);
 targetImg.addEventListener("touchstart", (e) => {
-  if (e.touches.length === 2) {
-    setCenter(e);
-  }
+  if (e.touches.length === 2) setCenter(e);
 });
 
 function setCenter(event) {
@@ -87,7 +75,7 @@ function setCenter(event) {
 
   document.querySelectorAll(".center").forEach(el => el.remove());
 
-  const pos = getScaledPosition(event);
+  const pos = getEventPosition(event);
   centerPoint = { x: pos.x, y: pos.y };
 
   drawDot(pos.x, pos.y, "center");
@@ -103,8 +91,7 @@ targetImg.addEventListener("touchend", addShot);
 function addShot(event) {
   if (!targetImg.src || !centerPoint) return;
 
-  const pos = getScaledPosition(event);
-
+  const pos = getEventPosition(event);
   shots.push({ x: pos.x, y: pos.y });
 
   drawDot(pos.x, pos.y, "shot");
@@ -133,7 +120,7 @@ function analyzeShots() {
   dx /= shots.length;
   dy /= shots.length;
 
-  let direction = "";
+ let direction = "";
 
   if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
     direction = "تجميع ممتاز في المركز";
@@ -158,6 +145,6 @@ function analyzeShots() {
   resultBox.innerHTML = `
     <h3>نتيجة التحليل</h3>
     <p>عدد الطلقات: ${shots.length}</p>
-    <p><strong>الخطأ الغالب:</strong> ${direction}</p>
+    <p><strong>الخطأ الغالب:</strong> ${result}</p>
   `;
 }
