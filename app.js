@@ -4,9 +4,13 @@ let img = document.getElementById("targetImage");
 
 let center = null;
 let shots = [];
+let shotMode = false;
+
 let lang = "ar";
 let langData = {};
 let errorsData = {};
+
+const X_RADIUS_RATIO = 0.05; // 5% من قطر الهدف
 
 fetch("lang.json").then(r => r.json()).then(d => {
   langData = d;
@@ -32,6 +36,7 @@ document.getElementById("targetLoader").onchange = e => {
 document.getElementById("setCenterBtn").onclick = () => {
   canvas.onclick = e => {
     center = getPos(e);
+    shots = [];
     draw();
     canvas.onclick = null;
   };
@@ -39,21 +44,24 @@ document.getElementById("setCenterBtn").onclick = () => {
 
 document.getElementById("shotBtn").onclick = () => {
   if (!center) return;
-  canvas.onclick = e => {
-    let pos = getPos(e);
-    shots.push(pos);
-    draw();
-    analyzeShot(pos);
-    canvas.onclick = null;
-  };
+  shotMode = true;
 };
 
 document.getElementById("resetBtn").onclick = () => {
   center = null;
   shots = [];
+  shotMode = false;
   ctx.clearRect(0,0,canvas.width,canvas.height);
   document.getElementById("analysisResult").innerHTML = "";
 };
+
+canvas.addEventListener("click", e => {
+  if (!shotMode || !center) return;
+  let pos = getPos(e);
+  shots.push(pos);
+  draw();
+  analyzeShot(pos);
+});
 
 function getPos(e) {
   let r = canvas.getBoundingClientRect();
@@ -83,22 +91,38 @@ function draw() {
 
 function analyzeShot(shot) {
   let dx = shot.x - center.x;
-  let dy = shot.y - center.y;
-  let key;
+  let dy = center.y - shot.y;
 
-  if (Math.abs(dx) > Math.abs(dy)) {
-    key = dx < 0 ? "LEFT" : "RIGHT";
-  } else {
-    key = dy < 0 ? "UP" : "DOWN";
+  let dist = Math.sqrt(dx*dx + dy*dy);
+  let xRadius = canvas.width * X_RADIUS_RATIO;
+
+  if (dist <= xRadius) {
+    document.getElementById("analysisResult").innerHTML =
+      lang === "ar"
+        ? "طلقة مركزية صحيحة (X) – أداء ممتاز"
+        : "Perfect center shot (X) – Excellent execution";
+    return;
   }
+
+  let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+  let key = "";
+
+  if (angle >= 67.5 && angle < 112.5) key = "UP";
+  else if (angle >= 22.5 && angle < 67.5) key = "UP_RIGHT";
+  else if (angle >= -22.5 && angle < 22.5) key = "RIGHT";
+  else if (angle >= -67.5 && angle < -22.5) key = "DOWN_RIGHT";
+  else if (angle >= -112.5 && angle < -67.5) key = "DOWN";
+  else if (angle >= -157.5 && angle < -112.5) key = "DOWN_LEFT";
+  else if (angle >= 157.5 || angle < -157.5) key = "LEFT";
+  else if (angle >= 112.5 && angle < 157.5) key = "UP_LEFT";
 
   let e = errorsData[key];
   if (!e) return;
 
   document.getElementById("analysisResult").innerHTML =
-    `<p>${lang === "ar" ? e.ar_error : e.en_error}</p>
-     <p>${lang === "ar" ? e.ar_cause : e.en_cause}</p>
-     <p>${lang === "ar" ? e.ar_fix : e.en_fix}</p>`;
+    `<b>${lang === "ar" ? e.ar_error : e.en_error}</b><br>
+     ${lang === "ar" ? e.ar_cause : e.en_cause}<br>
+     ${isPro ? (lang === "ar" ? e.ar_fix : e.en_fix) : ""}`;
 }
 
 document.getElementById("langToggle").onclick = () => {
