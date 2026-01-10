@@ -1,6 +1,6 @@
 * {
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
+  font-family: Arial;
 }
 
 body {
@@ -17,16 +17,10 @@ header span {
   color: #e50914;
 }
 
-.top-controls {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
 button {
   padding: 10px 15px;
-  border: none;
   border-radius: 8px;
+  border: none;
   background: #e50914;
   color: #fff;
   cursor: pointer;
@@ -36,30 +30,52 @@ button:hover {
   opacity: 0.9;
 }
 
-.controls {
-  margin: 15px 0;
+.top-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
-#targetContainer {
+.controls {
+  margin: 15px;
+}
+
+#targetContainer,
+#shooterContainer {
   position: relative;
   width: 90vw;
   max-width: 400px;
   margin: auto;
 }
 
-#targetImage {
+img {
   width: 100%;
   display: block;
 }
 
-#shotCanvas {
+canvas {
   position: absolute;
   top: 0;
   left: 0;
 }
 
-.shot {
-  color: #0f0;
+.hidden {
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #111;
+  padding: 20px;
+  border-radius: 10px;
 }
 
 #error {
