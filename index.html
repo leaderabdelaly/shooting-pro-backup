@@ -3,51 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shehaby Shooting Pro</title>
-
-  <link rel="manifest" href="manifest.json">
+  <title>ShootingCoach – Captain Shehaby AI</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
 </head>
 
 <body>
-
 <header>
-  <h1 id="appTitle">أخطاء رماية المسدس</h1>
-  <button id="langToggle">EN</button>
+  <h1>Shooting<span>Coach</span></h1>
+  <p>Captain Shehaby AI</p>
 </header>
 
+<div class="top-controls">
+  <button id="langBtn">EN</button>
+  <button id="proBtn">Pro</button>
+</div>
+
 <main>
+  <div class="controls">
+    <input type="file" id="targetUpload" accept="image/*">
+    <button id="setCenterBtn">تحديد المركز</button>
+    <button id="clearShotsBtn">مسح الطلقات</button>
+  </div>
 
-  <section id="uploadSection">
-    <input type="file" id="targetLoader" accept="image/*">
-  </section>
+  <div id="targetContainer">
+    <img id="targetImage" src="assets/target.png">
+    <canvas id="shotCanvas"></canvas>
+  </div>
 
-  <section id="targetSection">
-    <img id="targetImage">
-    <canvas id="overlay"></canvas>
-  </section>
-
-  <section id="controls">
-    <button id="setCenterBtn">تحديد مركز الهدف</button>
-    <button id="shotBtn">توقيع طلقة</button>
-    <button id="resetBtn">إعادة تعيين</button>
-  </section>
-
-  <section id="analysis">
-    <h2 id="analysisTitle">تحليل الطلقة</h2>
-    <div id="analysisResult"></div>
-  </section>
-
-  <section id="proSection">
-    <h3 id="proTitle">النسخة الاحترافية</h3>
-    <button id="activateProBtn">تفعيل النسخة الاحترافية</button>
-    <div id="proStatus"></div>
-  </section>
-
+  <div id="analysis"></div>
 </main>
 
 <script src="license.js"></script>
 <script src="app.js"></script>
-
 </body>
 </html>
