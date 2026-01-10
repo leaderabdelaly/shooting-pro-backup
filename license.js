@@ -1,11 +1,9 @@
 let isPro = false;
+const FREE_LIMIT = 10;
 
-document.getElementById("activateProBtn").onclick = () => {
-  let code = prompt("Enter activation code");
-  if (code === "SHEHABY2026") {
+function activatePro(code) {
+  if (code && code.length >= 6) {
     isPro = true;
-    document.getElementById("proStatus").innerText = "تم تفعيل النسخة الاحترافية";
-  } else {
-    alert("كود غير صحيح");
+    alert("Pro Activated");
   }
-};
+}
