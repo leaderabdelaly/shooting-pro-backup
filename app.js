@@ -4,15 +4,30 @@ let img = document.getElementById("targetImage");
 
 let center = null;
 let shots = [];
-let currentLang = "ar";
+let lang = "ar";
+let langData = {};
 let errorsData = {};
 
-canvas.width = img.width;
-canvas.height = img.height;
+fetch("lang.json").then(r => r.json()).then(d => {
+  langData = d;
+  applyLang();
+});
 
-fetch("errors.json")
-  .then(res => res.json())
-  .then(data => errorsData = data);
+fetch("errors.json").then(r => r.json()).then(d => errorsData = d);
+
+document.getElementById("targetLoader").onchange = e => {
+  let file = e.target.files[0];
+  let reader = new FileReader();
+  reader.onload = ev => {
+    img.src = ev.target.result;
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      draw();
+    };
+  };
+  reader.readAsDataURL(file);
+};
 
 document.getElementById("setCenterBtn").onclick = () => {
   canvas.onclick = e => {
@@ -25,9 +40,10 @@ document.getElementById("setCenterBtn").onclick = () => {
 document.getElementById("shotBtn").onclick = () => {
   if (!center) return;
   canvas.onclick = e => {
-    shots.push(getPos(e));
+    let pos = getPos(e);
+    shots.push(pos);
     draw();
-    analyzeShot(getPos(e));
+    analyzeShot(pos);
     canvas.onclick = null;
   };
 };
@@ -40,10 +56,10 @@ document.getElementById("resetBtn").onclick = () => {
 };
 
 function getPos(e) {
-  let rect = canvas.getBoundingClientRect();
+  let r = canvas.getBoundingClientRect();
   return {
-    x: (e.clientX - rect.left) * (canvas.width / rect.width),
-    y: (e.clientY - rect.top) * (canvas.height / rect.height)
+    x: (e.clientX - r.left) * (canvas.width / r.width),
+    y: (e.clientY - r.top) * (canvas.height / r.height)
   };
 }
 
@@ -68,8 +84,8 @@ function draw() {
 function analyzeShot(shot) {
   let dx = shot.x - center.x;
   let dy = shot.y - center.y;
-
   let key;
+
   if (Math.abs(dx) > Math.abs(dy)) {
     key = dx < 0 ? "LEFT" : "RIGHT";
   } else {
@@ -79,14 +95,24 @@ function analyzeShot(shot) {
   let e = errorsData[key];
   if (!e) return;
 
-  document.getElementById("analysisResult").innerHTML = `
-    <p>${currentLang === "ar" ? e.ar_error : e.en_error}</p>
-    <p>${currentLang === "ar" ? e.ar_cause : e.en_cause}</p>
-    <p>${currentLang === "ar" ? e.ar_fix : e.en_fix}</p>
-  `;
+  document.getElementById("analysisResult").innerHTML =
+    `<p>${lang === "ar" ? e.ar_error : e.en_error}</p>
+     <p>${lang === "ar" ? e.ar_cause : e.en_cause}</p>
+     <p>${lang === "ar" ? e.ar_fix : e.en_fix}</p>`;
 }
 
 document.getElementById("langToggle").onclick = () => {
-  currentLang = currentLang === "ar" ? "en" : "ar";
-  document.getElementById("langToggle").innerText = currentLang === "ar" ? "EN" : "AR";
+  lang = lang === "ar" ? "en" : "ar";
+  document.getElementById("langToggle").innerText = lang === "ar" ? "EN" : "AR";
+  applyLang();
 };
+
+function applyLang() {
+  document.getElementById("appTitle").innerText = langData[lang].title;
+  document.getElementById("setCenterBtn").innerText = langData[lang].setCenter;
+  document.getElementById("shotBtn").innerText = langData[lang].shot;
+  document.getElementById("resetBtn").innerText = langData[lang].reset;
+  document.getElementById("analysisTitle").innerText = langData[lang].analysis;
+  document.getElementById("proTitle").innerText = langData[lang].pro;
+  document.getElementById("activateProBtn").innerText = langData[lang].activate;
+}
