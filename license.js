@@ -1,46 +1,54 @@
-let isPro = localStorage.getItem("isPro") === "true";
-
-const proModal = document.getElementById("proModal");
 const proBtn = document.getElementById("proBtn");
-const postureSection = document.getElementById("postureSection");
+const proModal = document.getElementById("proModal");
 const activateBtn = document.getElementById("activateBtn");
 const cancelProBtn = document.getElementById("cancelProBtn");
 const proCodeInput = document.getElementById("proCode");
+const postureSection = document.getElementById("postureSection");
 
-function openProModal() {
+let isPro = localStorage.getItem("isPro") === "true";
+
+/* ---------- UI ---------- */
+function showProModal() {
   proModal.classList.remove("hidden");
 }
 
-function closeProModal() {
+function hideProModal() {
   proModal.classList.add("hidden");
 }
 
+/* ---------- Activation ---------- */
 function activatePro() {
   const code = proCodeInput.value.trim();
 
   if (code.length < 6) {
-    alert("كود غير صحيح");
+    alert("كود التفعيل غير صحيح");
     return;
   }
 
   localStorage.setItem("isPro", "true");
   isPro = true;
 
-  proModal.classList.add("hidden");
+  hideProModal();
   proBtn.style.display = "none";
   postureSection.classList.remove("hidden");
 
-  alert("تم تفعيل النسخة الاحترافية بنجاح");
+  alert("تم تفعيل النسخة الاحترافية");
 }
 
-proBtn.addEventListener("click", openProModal);
-cancelProBtn.addEventListener("click", closeProModal);
+/* ---------- Events ---------- */
+proBtn.addEventListener("click", showProModal);
+cancelProBtn.addEventListener("click", hideProModal);
 activateBtn.addEventListener("click", activatePro);
 
+/* ---------- Init ---------- */
 window.addEventListener("load", () => {
   if (isPro) {
-    proModal.classList.add("hidden");
     proBtn.style.display = "none";
     postureSection.classList.remove("hidden");
+    hideProModal();
+  } else {
+    proBtn.style.display = "inline-block";
+    postureSection.classList.add("hidden");
+    hideProModal();
   }
 });
