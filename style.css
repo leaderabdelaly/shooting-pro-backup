@@ -1,8 +1,8 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
   background: #111;
   color: #fff;
+  font-family: Arial, sans-serif;
   text-align: center;
 }
 
@@ -18,19 +18,14 @@ button {
   padding: 10px 15px;
   margin: 5px;
   font-size: 16px;
-  border: none;
   border-radius: 6px;
+  border: none;
   cursor: pointer;
 }
 
 #langToggle {
-  background: #0af;
+  background: #00aaff;
   color: #000;
-}
-
-#controls button {
-  background: #444;
-  color: #fff;
 }
 
 #targetSection {
@@ -50,10 +45,15 @@ button {
   top: 0;
 }
 
+#controls button {
+  background: #444;
+  color: #fff;
+}
+
 #analysis {
-  margin-top: 20px;
-  padding: 10px;
   background: #1b1b1b;
+  padding: 10px;
+  margin-top: 15px;
 }
 
 #proSection {
