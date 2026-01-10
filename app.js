@@ -1,23 +1,17 @@
 const img = document.getElementById("targetImage");
 const canvas = document.getElementById("shotCanvas");
 const ctx = canvas.getContext("2d");
-const analysis = document.getElementById("analysis");
 
 let center = null;
 let shots = [];
 let lang = "ar";
-let texts = {};
-
-fetch("lang.json")
-  .then(r => r.json())
-  .then(data => texts = data);
 
 function resizeCanvas() {
   canvas.width = img.clientWidth;
   canvas.height = img.clientHeight;
 }
-window.addEventListener("resize", resizeCanvas);
 img.onload = resizeCanvas;
+window.onresize = resizeCanvas;
 
 document.getElementById("targetUpload").onchange = e => {
   img.src = URL.createObjectURL(e.target.files[0]);
@@ -26,22 +20,17 @@ document.getElementById("targetUpload").onchange = e => {
 document.getElementById("setCenterBtn").onclick = () => {
   canvas.onclick = e => {
     center = { x: e.offsetX, y: e.offsetY };
-    redraw();
+    draw();
     canvas.onclick = addShot;
   };
 };
 
 function addShot(e) {
-  if (!isPro && shots.length >= 10) {
-    alert(texts[lang].freeLimit);
-    return;
-  }
   shots.push({ x: e.offsetX, y: e.offsetY });
-  redraw();
-  analyzeShot(e.offsetX, e.offsetY);
+  draw();
 }
 
-function redraw() {
+function draw() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
   if (center) {
     ctx.fillStyle = "yellow";
@@ -57,37 +46,63 @@ function redraw() {
   });
 }
 
-function analyzeShot(x,y) {
-  if (!center) return;
-  const dx = x - center.x;
-  const dy = center.y - y;
-  const r = Math.hypot(dx,dy);
-
-  if (r < 15) {
-    analysis.innerHTML += `<p class="shot">${texts[lang].perfect}</p>`;
-    return;
-  }
-
-  let key = "";
-  if (dy > 0 && Math.abs(dx) < dy) key = "up";
-  else if (dy < 0 && Math.abs(dx) < -dy) key = "down";
-  else if (dx > 0 && Math.abs(dy) < dx) key = "right";
-  else if (dx < 0 && Math.abs(dy) < -dx) key = "left";
-  else if (dx > 0 && dy > 0) key = "upRight";
-  else if (dx > 0 && dy < 0) key = "downRight";
-  else if (dx < 0 && dy < 0) key = "downLeft";
-  else if (dx < 0 && dy > 0) key = "upLeft";
-
-  analysis.innerHTML += `<p id="error">${texts[lang].errors[key]}</p>`;
-}
-
 document.getElementById("clearShotsBtn").onclick = () => {
   shots = [];
-  analysis.innerHTML = "";
-  redraw();
+  draw();
 };
 
 document.getElementById("langBtn").onclick = () => {
   lang = lang === "ar" ? "en" : "ar";
-  document.getElementById("langBtn").innerText = lang === "ar" ? "EN" : "AR";
 };
+
+document.getElementById("proBtn").onclick = openPro;
+document.getElementById("activateBtn").onclick = () =>
+  activatePro(document.getElementById("proCode").value);
+
+// -------- Posture Analysis --------
+
+const shooterImg = document.getElementById("shooterImage");
+const postureCanvas = document.getElementById("postureCanvas");
+const pctx = postureCanvas.getContext("2d");
+const postureAnalysis = document.getElementById("postureAnalysis");
+
+let points = [];
+const labels = ["Head","Shoulder","Hip","Knee","Foot"];
+
+document.getElementById("shooterUpload").onchange = e => {
+  shooterImg.src = URL.createObjectURL(e.target.files[0]);
+};
+
+shooterImg.onload = () => {
+  postureCanvas.width = shooterImg.clientWidth;
+  postureCanvas.height = shooterImg.clientHeight;
+};
+
+postureCanvas.onclick = e => {
+  if (points.length >= 5) return;
+  points.push({ x: e.offsetX, y: e.offsetY });
+  pctx.fillStyle = "lime";
+  pctx.beginPath();
+  pctx.arc(e.offsetX, e.offsetY, 5, 0, Math.PI*2);
+  pctx.fill();
+
+  if (points.length === 5) analyzePosture();
+};
+
+function analyzePosture() {
+  const head = points[0];
+  const foot = points[4];
+  const dx = Math.abs(head.x - foot.x);
+
+  if (dx > 30) {
+    postureAnalysis.innerHTML =
+      "خطأ في التوازن – الوزن مش متوزع صح<br>Fix: Shift weight evenly on both feet";
+  } else {
+    postureAnalysis.innerHTML =
+      "وقفة سليمة ومتزنة<br>Stable posture";
+  }
+}
+
+if (isPro) {
+  document.getElementById("postureSection").classList.remove("hidden");
+}
