@@ -1,20 +1,36 @@
 {
   "ar": {
-    "title": "تحليل أخطاء الرماية",
-    "setCenter": "تحديد مركز الهدف",
-    "shot": "توقيع طلقة",
-    "reset": "إعادة تعيين",
-    "analysis": "تحليل الطلقة",
-    "pro": "النسخة الاحترافية",
-    "activate": "تفعيل النسخة الاحترافية"
+    "center": "تحديد المركز",
+    "clear": "مسح الطلقات",
+    "pro": "نسخة احترافية",
+    "freeLimit": "النسخة المجانية تسمح بـ 10 طلقات فقط",
+    "perfect": "طلقة مركزية ممتازة – بدون أخطاء",
+    "errors": {
+      "up": "كسر المعصم لأعلى أو رفع الرأس",
+      "down": "كسر المعصم لأسفل أو خفض الرأس",
+      "right": "ضغط زائد بالإبهام أو شد القبضة",
+      "left": "سحب الزناد بطرف الإصبع",
+      "upRight": "توقع الارتداد مع شد القبضة",
+      "downRight": "زيادة شدة القبض أثناء السحب",
+      "downLeft": "نش الزناد أو خفض الرأس",
+      "upLeft": "عدم متابعة الطلقة"
+    }
   },
   "en": {
-    "title": "Shooting Error Analysis",
-    "setCenter": "Set Target Center",
-    "shot": "Register Shot",
-    "reset": "Reset",
-    "analysis": "Shot Analysis",
-    "pro": "Professional Version",
-    "activate": "Activate Pro Version"
+    "center": "Set Center",
+    "clear": "Clear Shots",
+    "pro": "Pro Version",
+    "freeLimit": "Free version allows only 10 shots",
+    "perfect": "Perfect center shot – no error",
+    "errors": {
+      "up": "Breaking wrist up or lifting head",
+      "down": "Breaking wrist down or dropping head",
+      "right": "Thumb pressure or tightening grip",
+      "left": "Too little trigger finger",
+      "upRight": "Anticipating recoil",
+      "downRight": "Tightening grip while pulling trigger",
+      "downLeft": "Jerking trigger",
+      "upLeft": "No follow-through"
+    }
   }
 }
