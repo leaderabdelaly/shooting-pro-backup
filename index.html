@@ -1,67 +1,59 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ShootingCoach Pro</title>
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8" />
+  <title>Shooting Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <header>
-  <h1>Shooting<span>Coach</span></h1>
-  <p>Captain Shehaby AI</p>
-</header>
-
-<div class="top-controls">
-  <button id="langBtn">EN</button>
+  <h1>Shooting Pro</h1>
+  <button id="langToggle">EN</button>
   <button id="proBtn">PRO</button>
-</div>
+</header>
 
 <main>
 
-<section class="controls">
-  <input type="file" id="targetUpload" accept="image/*">
-  <button id="setCenterBtn">تحديد المركز</button>
-  <button id="clearShotsBtn">مسح الطلقات</button>
-</section>
+  <section id="targetSection">
+    <input type="file" id="targetUpload" accept="image/*">
+    <canvas id="targetCanvas"></canvas>
+  </section>
 
-<div id="targetContainer">
-  <img id="targetImage" src="assets/target.png">
-  <canvas id="shotCanvas"></canvas>
-</div>
+  <section id="controls">
+    <button id="setCenterBtn">تحديد مركز الهدف</button>
+    <button id="shotBtn">توقيع الطلقات</button>
+    <button id="analyzeBtn">بدء تحليل الأخطاء</button>
+  </section>
 
-<div id="analysis"></div>
+  <section id="results"></section>
 
-<hr>
-
-<section id="postureSection" class="hidden">
-  <h2>تحليل وقفة الرامي – Pro</h2>
-  <input type="file" id="shooterUpload" accept="image/*">
-  <p>اضغط على الصورة لتحديد النقاط بالترتيب</p>
-
-  <div id="shooterContainer">
-    <img id="shooterImage">
-    <canvas id="postureCanvas"></canvas>
+  <!-- Pro Modal -->
+  <div id="proModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>تفعيل النسخة الاحترافية</h2>
+      <p>حوّل على المحفظة 01067050007 ثم أدخل كود التفعيل</p>
+      <input type="text" id="proCode" placeholder="كود التفعيل">
+      <div class="modal-actions">
+        <button id="activateBtn">تفعيل</button>
+        <button id="cancelProBtn">إلغاء</button>
+      </div>
+    </div>
   </div>
 
-  <div id="postureAnalysis"></div>
-</section>
+  <!-- Pro Only -->
+  <section id="postureSection" class="hidden">
+    <h2>تحليل وقفة الرامي</h2>
+    <input type="file" id="shooterUpload" accept="image/*">
+    <div id="postureResult"></div>
+  </section>
 
 </main>
 
-<div id="proModal" class="modal hidden">
-  <div class="modal-content">
-    <h3>تفعيل النسخة الاحترافية</h3>
-    <input type="text" id="proCode" placeholder="Enter activation code">
-    <button id="activateBtn">تفعيل</button>
-    <button onclick="closePro()">إلغاء</button>
-  </div>
-</div>
-
-<script src="license.js"></script>
+<script src="lang.js"></script>
 <script src="app.js"></script>
+<script src="license.js"></script>
+
 </body>
 </html>
