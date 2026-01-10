@@ -1,17 +1,14 @@
 const canvas = document.getElementById("targetCanvas");
 const ctx = canvas.getContext("2d");
 const results = document.getElementById("results");
-
 let targetImg = new Image();
 let center = null;
 let shots = [];
 let mode = null;
-
 /* ---------- Upload Target ---------- */
 document.getElementById("targetUpload").onchange = e => {
   const file = e.target.files[0];
   if (!file) return;
-
   const reader = new FileReader();
   reader.onload = () => {
     targetImg.src = reader.result;
@@ -23,7 +20,6 @@ document.getElementById("targetUpload").onchange = e => {
   };
   reader.readAsDataURL(file);
 };
-
 /* ---------- Drawing ---------- */
 function redraw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -35,7 +31,6 @@ function redraw() {
     drawPoint(s.x, s.y, "yellow", i + 1);
   });
 }
-
 function drawPoint(x, y, color, label) {
   ctx.fillStyle = color;
   ctx.beginPath();
@@ -47,44 +42,35 @@ function drawPoint(x, y, color, label) {
     ctx.fillText(label, x + 8, y - 8);
   }
 }
-
 /* ---------- Modes ---------- */
 document.getElementById("setCenterBtn").onclick = () => mode = "center";
 document.getElementById("shotBtn").onclick = () => mode = "shot";
-
 /* ---------- Click ---------- */
 canvas.addEventListener("click", e => {
   if (!targetImg.src) return;
-
   const rect = canvas.getBoundingClientRect();
   const x = (e.clientX - rect.left) * (canvas.width / rect.width);
   const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-
   if (mode === "center") {
     center = { x, y };
     redraw();
   }
-
   if (mode === "shot" && center) {
     shots.push({ x, y });
     redraw();
   }
 });
-
 /* ---------- Analysis ---------- */
 document.getElementById("analyzeBtn").onclick = () => {
   if (!center || shots.length === 0) {
     results.innerText = "حدد مركز الهدف ووقع الطلقات أولا";
     return;
   }
-
   let output = "";
   shots.forEach((s, i) => {
     const dx = s.x - center.x;
     const dy = center.y - s.y;
-
     let dir = "";
-
     if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
       dir = "X – طلقة مركزية صحيحة";
    {
@@ -118,10 +104,10 @@ document.getElementById("analyzeBtn").onclick = () => {
     }
   }
 }
-
     output += `طلقة ${i + 1}: ${dir}\n`;
   });
 
   results.innerText = output;
 };
+
 
