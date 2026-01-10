@@ -1,87 +1,55 @@
-let canvas = document.getElementById("overlay");
-let ctx = canvas.getContext("2d");
-let img = document.getElementById("targetImage");
+const img = document.getElementById("targetImage");
+const canvas = document.getElementById("shotCanvas");
+const ctx = canvas.getContext("2d");
+const analysis = document.getElementById("analysis");
 
 let center = null;
 let shots = [];
-let shotMode = false;
-
 let lang = "ar";
-let langData = {};
-let errorsData = {};
+let texts = {};
 
-const X_RADIUS_RATIO = 0.05; // 5% من قطر الهدف
+fetch("lang.json")
+  .then(r => r.json())
+  .then(data => texts = data);
 
-fetch("lang.json").then(r => r.json()).then(d => {
-  langData = d;
-  applyLang();
-});
+function resizeCanvas() {
+  canvas.width = img.clientWidth;
+  canvas.height = img.clientHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+img.onload = resizeCanvas;
 
-fetch("errors.json").then(r => r.json()).then(d => errorsData = d);
-
-document.getElementById("targetLoader").onchange = e => {
-  let file = e.target.files[0];
-  let reader = new FileReader();
-  reader.onload = ev => {
-    img.src = ev.target.result;
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      draw();
-    };
-  };
-  reader.readAsDataURL(file);
+document.getElementById("targetUpload").onchange = e => {
+  img.src = URL.createObjectURL(e.target.files[0]);
 };
 
 document.getElementById("setCenterBtn").onclick = () => {
   canvas.onclick = e => {
-    center = getPos(e);
-    shots = [];
-    draw();
-    canvas.onclick = null;
+    center = { x: e.offsetX, y: e.offsetY };
+    redraw();
+    canvas.onclick = addShot;
   };
 };
 
-document.getElementById("shotBtn").onclick = () => {
-  if (!center) return;
-  shotMode = true;
-};
-
-document.getElementById("resetBtn").onclick = () => {
-  center = null;
-  shots = [];
-  shotMode = false;
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  document.getElementById("analysisResult").innerHTML = "";
-};
-
-canvas.addEventListener("click", e => {
-  if (!shotMode || !center) return;
-  let pos = getPos(e);
-  shots.push(pos);
-  draw();
-  analyzeShot(pos);
-});
-
-function getPos(e) {
-  let r = canvas.getBoundingClientRect();
-  return {
-    x: (e.clientX - r.left) * (canvas.width / r.width),
-    y: (e.clientY - r.top) * (canvas.height / r.height)
-  };
+function addShot(e) {
+  if (!isPro && shots.length >= 10) {
+    alert(texts[lang].freeLimit);
+    return;
+  }
+  shots.push({ x: e.offsetX, y: e.offsetY });
+  redraw();
+  analyzeShot(e.offsetX, e.offsetY);
 }
 
-function draw() {
+function redraw() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
-
   if (center) {
-    ctx.fillStyle = "red";
+    ctx.fillStyle = "yellow";
     ctx.beginPath();
-    ctx.arc(center.x, center.y, 6, 0, Math.PI*2);
+    ctx.arc(center.x, center.y, 5, 0, Math.PI*2);
     ctx.fill();
   }
-
-  ctx.fillStyle = "yellow";
+  ctx.fillStyle = "red";
   shots.forEach(s => {
     ctx.beginPath();
     ctx.arc(s.x, s.y, 4, 0, Math.PI*2);
@@ -89,54 +57,37 @@ function draw() {
   });
 }
 
-function analyzeShot(shot) {
-  let dx = shot.x - center.x;
-  let dy = center.y - shot.y;
+function analyzeShot(x,y) {
+  if (!center) return;
+  const dx = x - center.x;
+  const dy = center.y - y;
+  const r = Math.hypot(dx,dy);
 
-  let dist = Math.sqrt(dx*dx + dy*dy);
-  let xRadius = canvas.width * X_RADIUS_RATIO;
-
-  if (dist <= xRadius) {
-    document.getElementById("analysisResult").innerHTML =
-      lang === "ar"
-        ? "طلقة مركزية صحيحة (X) – أداء ممتاز"
-        : "Perfect center shot (X) – Excellent execution";
+  if (r < 15) {
+    analysis.innerHTML += `<p class="shot">${texts[lang].perfect}</p>`;
     return;
   }
 
-  let angle = Math.atan2(dy, dx) * 180 / Math.PI;
   let key = "";
+  if (dy > 0 && Math.abs(dx) < dy) key = "up";
+  else if (dy < 0 && Math.abs(dx) < -dy) key = "down";
+  else if (dx > 0 && Math.abs(dy) < dx) key = "right";
+  else if (dx < 0 && Math.abs(dy) < -dx) key = "left";
+  else if (dx > 0 && dy > 0) key = "upRight";
+  else if (dx > 0 && dy < 0) key = "downRight";
+  else if (dx < 0 && dy < 0) key = "downLeft";
+  else if (dx < 0 && dy > 0) key = "upLeft";
 
-  if (angle >= 67.5 && angle < 112.5) key = "UP";
-  else if (angle >= 22.5 && angle < 67.5) key = "UP_RIGHT";
-  else if (angle >= -22.5 && angle < 22.5) key = "RIGHT";
-  else if (angle >= -67.5 && angle < -22.5) key = "DOWN_RIGHT";
-  else if (angle >= -112.5 && angle < -67.5) key = "DOWN";
-  else if (angle >= -157.5 && angle < -112.5) key = "DOWN_LEFT";
-  else if (angle >= 157.5 || angle < -157.5) key = "LEFT";
-  else if (angle >= 112.5 && angle < 157.5) key = "UP_LEFT";
-
-  let e = errorsData[key];
-  if (!e) return;
-
-  document.getElementById("analysisResult").innerHTML =
-    `<b>${lang === "ar" ? e.ar_error : e.en_error}</b><br>
-     ${lang === "ar" ? e.ar_cause : e.en_cause}<br>
-     ${isPro ? (lang === "ar" ? e.ar_fix : e.en_fix) : ""}`;
+  analysis.innerHTML += `<p id="error">${texts[lang].errors[key]}</p>`;
 }
 
-document.getElementById("langToggle").onclick = () => {
-  lang = lang === "ar" ? "en" : "ar";
-  document.getElementById("langToggle").innerText = lang === "ar" ? "EN" : "AR";
-  applyLang();
+document.getElementById("clearShotsBtn").onclick = () => {
+  shots = [];
+  analysis.innerHTML = "";
+  redraw();
 };
 
-function applyLang() {
-  document.getElementById("appTitle").innerText = langData[lang].title;
-  document.getElementById("setCenterBtn").innerText = langData[lang].setCenter;
-  document.getElementById("shotBtn").innerText = langData[lang].shot;
-  document.getElementById("resetBtn").innerText = langData[lang].reset;
-  document.getElementById("analysisTitle").innerText = langData[lang].analysis;
-  document.getElementById("proTitle").innerText = langData[lang].pro;
-  document.getElementById("activateProBtn").innerText = langData[lang].activate;
-}
+document.getElementById("langBtn").onclick = () => {
+  lang = lang === "ar" ? "en" : "ar";
+  document.getElementById("langBtn").innerText = lang === "ar" ? "EN" : "AR";
+};
