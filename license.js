@@ -1,9 +1,21 @@
-let isPro = false;
-const FREE_LIMIT = 10;
+let isPro = localStorage.getItem("isPro") === "true";
+
+function openPro() {
+  document.getElementById("proModal").classList.remove("hidden");
+}
+
+function closePro() {
+  document.getElementById("proModal").classList.add("hidden");
+}
 
 function activatePro(code) {
-  if (code && code.length >= 6) {
+  if (code.length >= 6) {
     isPro = true;
-    alert("Pro Activated");
+    localStorage.setItem("isPro", "true");
+    alert("Pro Activated Successfully");
+    document.getElementById("postureSection").classList.remove("hidden");
+    closePro();
+  } else {
+    alert("Invalid Code");
   }
 }
