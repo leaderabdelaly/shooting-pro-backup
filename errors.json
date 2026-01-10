@@ -1,0 +1,37 @@
+﻿{
+  "LEFT": {
+    "ar_error": "الطلقات ناحية الشمال",
+    "ar_cause": "ضغط الزناد مش مستقيم أو القبضة مش متزنة",
+    "ar_fix": "ثبّت القبضة واضغط الزناد للخلف بهدوء",
+    "en_error": "Shots to the left",
+    "en_cause": "Uneven trigger pressure or unstable grip",
+    "en_fix": "Stabilize your grip and press the trigger straight back"
+  },
+
+  "RIGHT": {
+    "ar_error": "الطلقات ناحية اليمين",
+    "ar_cause": "شد زيادة في القبضة أو صباعك داخل قوي",
+    "ar_fix": "هدي القبضة وعدل وضع صباع الزناد",
+    "en_error": "Shots to the right",
+    "en_cause": "Too much grip tension or too much finger",
+    "en_fix": "Relax your grip and adjust trigger finger position"
+  },
+
+  "UP": {
+    "ar_error": "رفع السلاح قبل الطلقة",
+    "ar_cause": "توقع الضربة أو شد المعصم",
+    "ar_fix": "سيب الطلقة تطلع لوحدها وثبّت المعصم",
+    "en_error": "Pulling up before the shot",
+    "en_cause": "Anticipating recoil",
+    "en_fix": "Let the shot break naturally and lock your wrist"
+  },
+
+  "DOWN": {
+    "ar_error": "ضغط السلاح لتحت",
+    "ar_cause": "محاولة تمنع الارتداد بدري",
+    "ar_fix": "متضغطش السلاح لتحت وخليه يتحرك طبيعي",
+    "en_error": "Pushing the gun down",
+    "en_cause": "Trying to fight recoil",
+    "en_fix": "Do not push the gun downward"
+  }
+}
