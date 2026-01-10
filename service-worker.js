@@ -1,13 +1,7 @@
 self.addEventListener("install", e => {
   e.waitUntil(
-    caches.open("shooting-pro").then(cache => {
-      return cache.addAll([
-        "./",
-        "./index.html",
-        "./style.css",
-        "./app.js",
-        "./errors.json"
-      ]);
-    })
+    caches.open("sc-cache").then(cache =>
+      cache.addAll(["./","index.html","style.css","app.js","lang.json"])
+    )
   );
 });
