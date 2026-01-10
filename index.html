@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Shooting Pro</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shehaby Shooting Pro</title>
 
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
@@ -12,15 +12,18 @@
 <body>
 
 <header>
-  <h1 id="appTitle">تحليل أخطاء الرماية</h1>
-
+  <h1 id="appTitle">أخطاء رماية المسدس</h1>
   <button id="langToggle">EN</button>
 </header>
 
 <main>
 
+  <section id="uploadSection">
+    <input type="file" id="targetLoader" accept="image/*">
+  </section>
+
   <section id="targetSection">
-    <img id="targetImage" src="target.png" alt="Target">
+    <img id="targetImage">
     <canvas id="overlay"></canvas>
   </section>
 
@@ -36,7 +39,7 @@
   </section>
 
   <section id="proSection">
-    <h3>النسخة الاحترافية</h3>
+    <h3 id="proTitle">النسخة الاحترافية</h3>
     <button id="activateProBtn">تفعيل النسخة الاحترافية</button>
     <div id="proStatus"></div>
   </section>
