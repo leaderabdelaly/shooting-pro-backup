@@ -1,150 +1,92 @@
-/* ==============================
-   Shehaby Shooting Pro
-   app.js – Stable Version
-   ============================== */
+let canvas = document.getElementById("overlay");
+let ctx = canvas.getContext("2d");
+let img = document.getElementById("targetImage");
 
-const targetInput = document.getElementById("targetInput");
-const targetImg = document.getElementById("targetImg");
-const targetContainer = document.getElementById("targetContainer");
-const analyzeBtn = document.getElementById("analyzeBtn");
-const resultBox = document.getElementById("result");
-
+let center = null;
 let shots = [];
-let centerPoint = null;
+let currentLang = "ar";
+let errorsData = {};
 
-/* ==============================
-   Utils
-   ============================== */
+canvas.width = img.width;
+canvas.height = img.height;
 
-function getEventPosition(event) {
-  const rect = targetImg.getBoundingClientRect();
+fetch("errors.json")
+  .then(res => res.json())
+  .then(data => errorsData = data);
 
-  const clientX = event.touches ? event.touches[0].clientX : event.clientX;
-  const clientY = event.touches ? event.touches[0].clientY : event.clientY;
-
-  const x = clientX - rect.left;
-  const y = clientY - rect.top;
-
-  return { x, y };
-}
-
-function drawDot(x, y, className) {
-  const dot = document.createElement("div");
-  dot.className = className;
-  dot.style.left = `${x}px`;
-  dot.style.top = `${y}px`;
-  targetContainer.appendChild(dot);
-}
-
-/* ==============================
-   Load Target Image
-   ============================== */
-
-targetInput.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    targetImg.src = reader.result;
-    targetImg.style.display = "block";
-    clearShotsOnly();
+document.getElementById("setCenterBtn").onclick = () => {
+  canvas.onclick = e => {
+    center = getPos(e);
+    draw();
+    canvas.onclick = null;
   };
-  reader.readAsDataURL(file);
-});
+};
 
-function clearShotsOnly() {
+document.getElementById("shotBtn").onclick = () => {
+  if (!center) return;
+  canvas.onclick = e => {
+    shots.push(getPos(e));
+    draw();
+    analyzeShot(getPos(e));
+    canvas.onclick = null;
+  };
+};
+
+document.getElementById("resetBtn").onclick = () => {
+  center = null;
   shots = [];
-  centerPoint = null;
-  resultBox.innerHTML = "";
-  document.querySelectorAll(".shot, .center").forEach(el => el.remove());
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  document.getElementById("analysisResult").innerHTML = "";
+};
+
+function getPos(e) {
+  let rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top) * (canvas.height / rect.height)
+  };
 }
 
-/* ==============================
-   Set Center
-   ============================== */
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-targetImg.addEventListener("dblclick", setCenter);
-targetImg.addEventListener("touchstart", (e) => {
-  if (e.touches.length === 2) setCenter(e);
-});
-
-function setCenter(event) {
-  event.preventDefault();
-  if (!targetImg.src) return;
-
-  document.querySelectorAll(".center").forEach(el => el.remove());
-
-  const pos = getEventPosition(event);
-  centerPoint = { x: pos.x, y: pos.y };
-
-  drawDot(pos.x, pos.y, "center");
-}
-
-/* ==============================
-   Add Shot
-   ============================== */
-
-targetImg.addEventListener("click", addShot);
-targetImg.addEventListener("touchend", addShot);
-
-function addShot(event) {
-  if (!targetImg.src || !centerPoint) return;
-
-  const pos = getEventPosition(event);
-  shots.push({ x: pos.x, y: pos.y });
-
-  drawDot(pos.x, pos.y, "shot");
-}
-
-/* ==============================
-   Analysis
-   ============================== */
-
-analyzeBtn.addEventListener("click", analyzeShots);
-
-function analyzeShots() {
-  if (!centerPoint || shots.length === 0) {
-    resultBox.innerHTML = "❌ حدد مركز الهدف والطلقات أولاً";
-    return;
+  if (center) {
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, 6, 0, Math.PI*2);
+    ctx.fill();
   }
 
-  let dx = 0;
-  let dy = 0;
-
+  ctx.fillStyle = "yellow";
   shots.forEach(s => {
-    dx += s.x - centerPoint.x;
-    dy += s.y - centerPoint.y;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, 4, 0, Math.PI*2);
+    ctx.fill();
   });
+}
 
-  dx /= shots.length;
-  dy /= shots.length;
+function analyzeShot(shot) {
+  let dx = shot.x - center.x;
+  let dy = shot.y - center.y;
 
- let direction = "";
-
-  if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
-    direction = "تجميع ممتاز في المركز";
-  } else if (dx > 0 && dy < 0) {
-    direction = " يمين أعلى – شد زائد بصباع التريجر مع زق بالمعصم";
-  } else if (dx < 0 && dy < 0) {
-    direction = "يسار أعلى – زق بالمعصم مع نتش التريجر ";
-  } else if (dx > 0 && dy > 0) {
-    direction = "يمين أسفل – سقوط السن مع تدخل الأصابع اثناء السحب مع شد التريجر بدخول زائد للسبابة";
-  } else if (dx < 0 && dy > 0) {
-    direction = "يسار أسفل – نتش التريجر بطرف السبابة مع عدم تثبيت المعصم ";
-  } else if (dx > 0) {
-    direction = "يمين – تدخل الأصابع اثناء السحب مع شد التريجر بدخول زائد للسبابة ";
-  } else if (dx < 0) {
-    direction = "يسار – ضغط بأطراف الأصابع على القبضة أو سحب بطرف السبابة ";
-  } else if (dy < 0) {
-    direction = "أعلى – دفع بالمعصم لأعلى أو سقوط الرأس لأسفل";
-  } else if (dy > 0) {
-    direction = "أسفل – دفع بالمعصم لأسفل أو رفع الرأس لأعلى";
+  let key;
+  if (Math.abs(dx) > Math.abs(dy)) {
+    key = dx < 0 ? "LEFT" : "RIGHT";
+  } else {
+    key = dy < 0 ? "UP" : "DOWN";
   }
 
-  resultBox.innerHTML = `
-    <h3>نتيجة التحليل</h3>
-    <p>عدد الطلقات: ${shots.length}</p>
-    <p><strong>الخطأ الغالب:</strong> ${result}</p>
+  let e = errorsData[key];
+  if (!e) return;
+
+  document.getElementById("analysisResult").innerHTML = `
+    <p>${currentLang === "ar" ? e.ar_error : e.en_error}</p>
+    <p>${currentLang === "ar" ? e.ar_cause : e.en_cause}</p>
+    <p>${currentLang === "ar" ? e.ar_fix : e.en_fix}</p>
   `;
 }
+
+document.getElementById("langToggle").onclick = () => {
+  currentLang = currentLang === "ar" ? "en" : "ar";
+  document.getElementById("langToggle").innerText = currentLang === "ar" ? "EN" : "AR";
+};
