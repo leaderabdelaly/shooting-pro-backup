@@ -87,17 +87,41 @@ document.getElementById("analyzeBtn").onclick = () => {
 
     if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
       dir = "X – طلقة مركزية صحيحة";
-    } else if (dy > 0 && Math.abs(dx) < dy) dir = "فوق – رفع الذراع";
-    else if (dy < 0 && Math.abs(dx) < -dy) dir = "تحت – ضغط زائد على الزناد";
-    else if (dx > 0 && Math.abs(dy) < dx) dir = "يمين – زيادة قبضة اليد";
-    else if (dx < 0 && Math.abs(dy) < -dx) dir = "شمال – سحب الزناد جانبي";
-    else if (dx > 0 && dy > 0) dir = "يمين وفوق";
-    else if (dx > 0 && dy < 0) dir = "يمين وتحت";
-    else if (dx < 0 && dy < 0) dir = "شمال وتحت";
-    else if (dx < 0 && dy > 0) dir = "شمال وفوق";
+   {
+    "errors": {
+      "ar": {
+      "up": "دفع المعصم لأعلى أو خفض الرأس",
+      "down": "كسر المعصم لأسفل أو رفع الرأس",
+      "right": "ضغط زائد بالإبهام أو زيادة شدة القبض",
+      "left": "سحب التريجر بطرف عقلة السبابة",
+      "upRight": "توقع الارتداد مع شد القبضة",
+      "downRight": "زيادة شدة القبض أثناء السحب",
+      "downLeft": "نش الزناد مع زيادة قوة القبض",
+      "upLeft": "عدم متابعة الطلقة"
+    }
+  },
+  "en": {
+    "center": "Set Center",
+    "clear": "Clear Shots",
+    "pro": "Pro Version",
+    "freeLimit": "Free version allows only 10 shots",
+    "perfect": "Perfect center shot – no error",
+    "errors": {
+      "up": "Breaking wrist up or DROPPED head",
+      "down": "Breaking wrist down or RAISED head",
+      "right": "Thumb pressure or tightening grip",
+      "left": "Too little trigger finger",
+      "upRight": "Anticipating recoil",
+      "downRight": "Tightening grip while pulling trigger",
+      "downLeft": "Jerking trigger",
+      "upLeft": "No follow-through"
+    }
+  }
+}
 
     output += `طلقة ${i + 1}: ${dir}\n`;
   });
 
   results.innerText = output;
 };
+
