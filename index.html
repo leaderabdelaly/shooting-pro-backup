@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShootingCoach – Captain Shehaby AI</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShootingCoach Pro</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
 </head>
 
 <body>
+
 <header>
   <h1>Shooting<span>Coach</span></h1>
   <p>Captain Shehaby AI</p>
@@ -16,23 +17,49 @@
 
 <div class="top-controls">
   <button id="langBtn">EN</button>
-  <button id="proBtn">Pro</button>
+  <button id="proBtn">PRO</button>
 </div>
 
 <main>
-  <div class="controls">
-    <input type="file" id="targetUpload" accept="image/*">
-    <button id="setCenterBtn">تحديد المركز</button>
-    <button id="clearShotsBtn">مسح الطلقات</button>
+
+<section class="controls">
+  <input type="file" id="targetUpload" accept="image/*">
+  <button id="setCenterBtn">تحديد المركز</button>
+  <button id="clearShotsBtn">مسح الطلقات</button>
+</section>
+
+<div id="targetContainer">
+  <img id="targetImage" src="assets/target.png">
+  <canvas id="shotCanvas"></canvas>
+</div>
+
+<div id="analysis"></div>
+
+<hr>
+
+<section id="postureSection" class="hidden">
+  <h2>تحليل وقفة الرامي – Pro</h2>
+  <input type="file" id="shooterUpload" accept="image/*">
+  <p>اضغط على الصورة لتحديد النقاط بالترتيب</p>
+
+  <div id="shooterContainer">
+    <img id="shooterImage">
+    <canvas id="postureCanvas"></canvas>
   </div>
 
-  <div id="targetContainer">
-    <img id="targetImage" src="assets/target.png">
-    <canvas id="shotCanvas"></canvas>
-  </div>
+  <div id="postureAnalysis"></div>
+</section>
 
-  <div id="analysis"></div>
 </main>
+
+<div id="proModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>تفعيل النسخة الاحترافية</h3>
+    <input type="text" id="proCode" placeholder="Enter activation code">
+    <button id="activateBtn">تفعيل</button>
+    <button onclick="closePro()">إلغاء</button>
+  </div>
+</div>
 
 <script src="license.js"></script>
 <script src="app.js"></script>
